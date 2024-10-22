@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <!-- <link rel="stylesheet" href="static/css/style_commond.css" /> -->
+  <link rel="stylesheet" href="{{ url_for('main_bp.static', filename='css/style_commond.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <header>
+    <div class="inner">
+      <div class="head-container">
+        <div class="head-logo">
+          <img height="50" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-4514730.png" alt="모찌 로고">
+          <a href="/" class="luckiest-guy-regular">MOJJI</a>
+        </div>
+        <div class="navbar">
+        {% if current_user.is_authenticated %}
+          <p>{{ current_user.member_id }} 님</p>
+          <a href="{{ url_for('auth.logout') }}" class="logout">Logout</a>
+          <a href="{{ url_for('auth.logout') }}" class="logout-icon"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+        {% else %}
+          <a href="/auth/login">Login</a>
+          <a href="/auth/register">Join</a>
+        {% endif %}
+          <div class="dropdown">
+            <button class="dropbtn">MyMojji</button>
+            <button class="dropbtn-icon"><i class="fa-regular fa-id-badge"></i></button>
+            <div class="dropdown-content">
+              <a href="/mymojji/closet">Closet</a>
+              <a href="/mymojji/favorite">Favorite</a>
+              <a href="/mymojji/modify">Profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {% block content %}
+  {% endblock %}
+
+  <footer>
+    <div class="inner">
+      <div class="footer-message">항상 더 효율적으로 일을 처리할 수 있는 방법과 기술을 찾고 발전하는 데 전념합니다.</div>
+      <div class="footer-contact">E-mail: kyungrin0105@gmail.com</div>
+      <div class="footer-copyright">Copyright 2024 © ALL RIGHTS RESERVED</div>
+    </div>
+  </footer>
+
+</body>
+</html>

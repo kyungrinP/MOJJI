@@ -1,0 +1,268 @@
+.register_container {
+  width: 100%;
+  margin-top: 130px;
+  text-align: center;
+  margin-bottom: 70px;
+  font-family: "Montserrat", sans-serif;
+}
+
+.register_title h2 {
+  font-style: normal;
+  margin: 0;
+  letter-spacing: 0.25em;
+  display: block;
+  color: #333;
+  font-size: 22px;
+  text-align: center;
+}
+
+.register_title li {
+  list-style: none;
+  color: #333;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  margin-top: 30px;
+  font-weight: normal;
+}
+
+.register_base_table {
+  width: 100%;
+  height: 100%;
+  font-size: 14px;
+  margin-top: 50px;
+}
+
+.register_base_table table {
+  width: 100%;
+  border: 0;
+  border-spacing: 0;
+  position: relative;
+  margin: 10px 0 0;
+  border: 1px solid #999;
+  border-top: 0;
+  line-height: 1.5;
+  border-left: none;
+  border-right: none;
+}
+
+.register_base_table tbody th {
+  padding: 11px 0 10px 18px;
+  border: 1px solid #999;
+  border-bottom-width: 0;
+  text-align: left;
+}
+
+.register_base_table tbody th:first-child {
+  border-left: none;
+}
+
+.register_base_table tbody td {
+  padding: 11px 10px 10px;
+  border-top: 1px solid #999;
+  vertical-align: middle;
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+.register_base_table td a {
+  text-decoration: none;
+}
+
+.btnNormal{
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 2px 8px;
+  border: 1px solid #999;
+  border-radius: 7px;
+  font-size: 11px;
+  line-height: 18px;
+  font-weight: normal;
+  text-decoration: none;
+  vertical-align: middle;
+  word-spacing: -0.5px;
+  letter-spacing: 0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.gBlank5 {
+  display: block;
+  margin-top: 5px;
+}
+
+.register_personal {
+  padding: 35px 0 10px;
+  font-size: 16px;
+}
+
+.eTooltip {
+  position: relative;
+}
+
+.typeUpper {
+  display: none;
+  position: relative;
+  top: inherit;
+  bottom: inherit;
+  padding: 14px 4px 7px;
+  font-size: 11px;
+  letter-spacing: .04em;
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+.txtWarn {
+  color: #f65b54;
+}
+
+.gBlank10 {
+  color: #555;
+}
+
+#postcode1 {
+  width: 70px;
+  text-align: center;
+}
+
+input[type=text], input[type=password] {
+  line-height: 20px;
+  padding: 2px 4px;
+  border: 1px solid #999;
+  font-size: 14px;
+  font-size: 95%;
+}
+
+input {
+  font-size: 95%;
+  color: #333;
+  border-radius: 7px;
+  vertical-align: middle;
+}
+
+.btnNormal {
+  color: #939393;
+}
+
+#addr1, #addr2, #extraAddress {
+  width: 250px;
+  margin: 5px 0 0;
+}
+
+#mobile1 {
+  width: 60px;
+  margin: 0 4px 0 0;
+}
+
+#mobile2, #mobile3 {
+  width: 80px;
+  margin: 0 4px;
+}
+
+select {
+  height: 24px;
+  border: 1px solid #999;
+  font-size: 100%;
+  border-radius: 7px;
+  vertical-align: middle;
+}
+
+.modify-button {
+  position: relative;
+  padding: 30px 0;
+  text-align: center;
+  font-size: 13px;
+}
+
+.btnSubmitFix, .btnEmFix {
+  width: 130px;
+  display: inline-block;
+  box-sizing: border-box;
+  text-decoration: none;
+  border: 1px solid #999;
+  border-radius: 7px;
+  vertical-align: middle;
+  padding: 10px 16px;
+  color: #333;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.gRight {
+  position: absolute;
+  right: 0;
+  float: right;
+  text-align: right;
+  text-decoration: none;
+}
+
+.btndelete {
+  display: inline-block;
+  box-sizing: border-box;
+  font-weight: normal;
+  text-decoration: none;
+  vertical-align: middle;
+  padding: 6px 8px;
+  border: 1px solid #999;
+  border-radius: 7px;
+  font-size: 11px;
+  line-height: 18px;
+  color: #333;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1024px) {
+  .inner {
+    width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+    height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+    margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+    padding: 0.5rem 2rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+    overflow: hidden;
+  }
+
+  .codishop_img {
+    width: 350px;
+  }
+
+  .codishop_img:not(:first-child) {
+    display: none; /* 첫 번째 이미지 이후의 이미지를 숨깁니다. */
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .gallery {
+    max-width: 180px;
+  }
+  
+  .favorite_save {
+    font-size: 12px;
+    padding: 10px 50px;
+    position: absolute;
+    bottom: -2px; /* 이미지의 하단에서 10px 위치 */
+    left: -45px; /* 이미지의 왼쪽에서 10px 위치 */
+    z-index: 1; /* 아이콘이 이미지 위에 올라가도록 설정합니다. */
+  }
+
+  .register_base_table {
+    font-size: 12px;
+  }
+
+  .modify-button {
+    font-size: 12px;
+  }
+
+  .btndelete {
+    font-size: 8px;
+  }
+
+  .register_base_table tbody th {
+    padding-left: 10px;
+  }
+
+  .btnSubmitFix, .btnEmFix {
+    width: auto;
+  }
+}

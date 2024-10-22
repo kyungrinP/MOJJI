@@ -1,0 +1,134 @@
+.login-container {
+  margin: 200px 0 120px;
+}
+
+.login-title h2 {
+  font-style: normal;
+  margin: 0;
+  letter-spacing: 0.25em;
+  display: block;
+  color: #333;
+  font-size: 22px;
+  text-align: center;
+  font-family: "Montserrat", sans-serif;
+}
+
+.login-box {
+  position: relative;
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.login, .password {
+  display: block;
+  overflow: hidden;
+  margin: 7px 0 0;
+  color: #939393;
+}
+
+.inputTypeText {
+  width: 100%;
+  height: 42px;
+  line-height: 42px;
+  padding: 1% 1% 1% 5%;
+  box-sizing: border-box;
+  border-radius: 30px;
+  font-size: 11px;
+  border: 1px solid #999;
+}
+
+.logMiddleArea {
+  position: relative;
+  display: block;
+  width: 96%;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.findInfo {
+  margin: 12px 0 0;
+  padding: 0;
+  text-align: left;
+}
+
+.findInfo li {
+  display: inline-block;
+  margin-right: 14px;
+  line-height: 18px;
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+.findInfo li a {
+  text-decoration: none;
+  color: #333;
+}
+
+.logBtnArea {
+  position: relative;
+  margin: 50px auto 0;
+}
+
+.loginbtn {
+  width: 250px;
+  color: #555;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #999;
+  border-radius: 30px;
+  box-sizing: border-box;
+  text-decoration: none;
+  background: #ffe3d2;
+  transition: .35s ease;
+  letter-spacing: .15em;
+  height: 36px;
+}
+
+.loginbtn:hover {
+  cursor: pointer;
+}
+
+.logBtnArea li {
+  display: block;
+  width: 100%;
+  height: 40px;
+  margin: 10px 0 0;
+  text-align: center;
+}
+
+@media only screen and (max-width: 1024px) {
+  .inner {
+    width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+    height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+    margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+    padding: 0.5rem 2rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+    overflow: hidden;
+  }
+
+  .codishop_img {
+    width: 350px;
+  }
+
+  .codishop_img:not(:first-child) {
+    display: none; /* 첫 번째 이미지 이후의 이미지를 숨깁니다. */
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .gallery {
+    max-width: 180px;
+  }
+  
+  .favorite_save {
+    font-size: 12px;
+    padding: 10px 50px;
+    position: absolute;
+    bottom: -2px; /* 이미지의 하단에서 10px 위치 */
+    left: -45px; /* 이미지의 왼쪽에서 10px 위치 */
+    z-index: 1; /* 아이콘이 이미지 위에 올라가도록 설정합니다. */
+  }
+}

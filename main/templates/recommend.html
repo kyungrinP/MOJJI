@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('main_bp.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('main_bp.static', filename='css/style_recommend.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Do+Hyeon&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="result-container">
+        <div class="result-title">
+          <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-stars-6360838.png" alt="타이틀 아이콘" class="result-icon">
+          <p class="result-name">{{ color }}색 {{ item_name }} MOJJI 추천 제품</p>
+          <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-stars-6360838.png" alt="타이틀 아이콘" class="result-icon">
+        </div>
+      </div>
+      <div class="result-desc-container">
+        <p>하트♥️를 누르면 favorite에 저장됩니다.</p>
+        <p class="result-desc"> (회원전용)</p>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="inner">
+      <div class="rotate" id="rotate">
+        <i class="fa-solid fa-rotate"></i>
+      </div>
+      <div class="recom_container" id="recom_container">
+        {% for top_15_element in top_15_elements[:3] %}
+          <div class="image-container">
+            <a href="{{ top_15_element.href }}" target="_blank">
+              <img src="{{ top_15_element.src }}" alt="추천코디" class="recom_codi">
+            </a>
+            <i class="fa-regular fa-heart heart-frame heart-icon" data-src="{{ top_15_element.src }}" data-href="{{ top_15_element.href }}" aria-hidden="true"></i>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const rotateIcon = document.getElementById('rotate');
+      const recomContainer = document.getElementById('recom_container');
+      const imageElements = {{ top_15_elements|tojson }};
+      const savedFavorites = {{ saved_favorites|tojson }};
+      let currentIndex = 0;
+
+      function displayImages() {
+        recomContainer.innerHTML = '';
+        for (let i = 0; i < 3; i++) {
+          const index = (currentIndex + i) % imageElements.length;
+          const imageElement = imageElements[index];
+          const imageContainer = document.createElement('div');
+          imageContainer.classList.add('image-container');
+  
+          const anchor = document.createElement('a');
+          anchor.href = imageElement.href;
+          anchor.target = '_blank';
+  
+          const img = document.createElement('img');
+          img.src = imageElement.src;
+          img.alt = '추천코디';
+          img.classList.add('recom_codi');
+  
+          const heartIcon = document.createElement('i');
+          heartIcon.classList.add('fa-regular', 'fa-heart', 'heart-frame', 'heart-icon');
+          heartIcon.dataset.src = imageElement.src;
+          heartIcon.dataset.href = imageElement.href;
+  
+          // 하트 아이콘 상태 설정
+          if (savedFavorites.includes(imageElement.href)) {
+            heartIcon.classList.remove('fa-regular');
+            heartIcon.classList.add('fa-solid');
+          }
+  
+          anchor.appendChild(img);
+          imageContainer.appendChild(anchor);
+          imageContainer.appendChild(heartIcon);
+          recomContainer.appendChild(imageContainer);
+        }
+      }
+  
+      rotateIcon.addEventListener('click', function() {
+        currentIndex = (currentIndex + 3) % imageElements.length;
+        displayImages();
+      });
+
+      // 처음 이미지를 표시합니다.
+      displayImages();
+
+      // 하트 아이콘 클릭 이벤트
+      recomContainer.addEventListener('click', function(event) {
+        if (event.target.classList.contains('heart-icon')) {
+          const heartIcon = event.target;
+          const userID = '{{ current_user.member_id }}';
+          const imageUrl = heartIcon.dataset.src;
+          const imageHref = heartIcon.dataset.href;
+          const fileName = heartIcon.dataset.filename;
+
+          if (!userID) {
+            if (confirm('로그인 후 이용할 수 있습니다.\n로그인 페이지로 이동하시겠습니까?')) {
+              window.location.href = "{{ url_for('auth.login') }}";
+            }
+            return;
+          }
+  
+          let action = 'save';
+          if (heartIcon.classList.contains('fa-solid')) {
+            action = 'delete';
+          }
+  
+          fetch("{{ url_for('mymojji.favorite') }}", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              action: action, 
+              userID: userID,
+              image: imageUrl,
+              href: imageHref,
+              file_name: fileName
+            })
+          })
+          .then(response => {
+            if (response.ok) {
+              return response.json();
+            } else {
+              throw new Error('네트워크 응답이 올바르지 않습니다.');
+            }
+          })
+          .then(data => {
+            if (data.success) {
+              if (action === 'save') {
+                heartIcon.dataset.filename = data.file_name;
+                heartIcon.classList.remove('fa-regular');
+                heartIcon.classList.add('fa-solid');
+                savedFavorites.push(imageHref); // Update savedFavorites
+              } else {
+                heartIcon.classList.remove('fa-solid');
+                heartIcon.classList.add('fa-regular');
+                const index = savedFavorites.indexOf(imageHref); // Update savedFavorites
+                if (index > -1) {
+                  savedFavorites.splice(index, 1);
+                }
+              }
+            } else {
+              throw new Error(data.message);
+            }
+          })
+          .catch(error => {
+            console.error('에러 발생:', error.message);
+          });
+        }
+      });
+    });
+  </script>
+  <section>
+    <div class="inner">
+      <div class="codi_container">
+        <div class="codi-title">
+          <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-stars-6360838.png" alt="타이틀 아이콘" class="result-icon">
+          <!-- <p class="result-codi">{{ color }}색 {{ item_name }} 코디 조합</p> -->
+          <p class="result-codi">MOJJI 추천 제품 스타일링</p>
+          <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-stars-6360838.png" alt="타이틀 아이콘" class="result-icon">
+        </div>
+        <div class="codishop_container">
+          {% if random_styles|length > 0 %}
+            <img src="{{ random_styles[0] }}" alt="추천코디" class="codishop_img">
+          {% endif %}
+          <div class="divider"></div>
+          {% if random_styles|length > 1 %}
+            <img src="{{ random_styles[1] }}" alt="추천코디" class="codishop_img">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+</body>
+</html>

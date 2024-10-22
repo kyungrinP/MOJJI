@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_find_passwd_auth_cg.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="findid-container">
+        <div class="findid-title">
+          <h2>FIND PASSWORD</h2>
+        </div>
+        <div class="findid-boxtitle">
+          <h3>비밀번호 재설정</h3>
+          <ul class="ec-base-desc">
+            <li>
+                <strong class="term">아이디</strong>
+                <span class="desc">
+                  <strong class="txtEm">{{ user_id }}</strong>
+                </span>
+            </li>
+            <form id="preferenceForm" action="/auth/changed-pw" method="POST" onsubmit="return validateForm()">
+              <input type="hidden" name="userid" value="{{ user_id }}">
+              <input type="hidden" name="user_email" value="{{ user_email }}">
+              <input type="hidden" name="user_mobile" value="{{ user_mobile }}">
+              <li>
+                <label for="new_passwd" class="term">새 비밀번호</label>
+                <div class="desc">
+                  <input class="lostInput" id="new_passwd" name="new_passwd" maxlength="16" type="password">
+                  <div class="txtInfo">
+                    (영문 대소문자/숫자/특수문자 중 3가지 이상 조합, 8자~16자)
+                  </div>
+                </div>
+              </li>
+              <li>
+                <label for="new_passwd_confirm" class="term">새 비밀번호 확인</label>
+                <div class="desc">
+                  <input class="lostInput" id="new_passwd_confirm" name="new_passwd_confirm" maxlength="16" type="password">
+                </div>
+              </li>
+              <div class="ec-base-button">
+                <button type="submit" class="btnSubmit-result">비밀번호 변경</button>
+                <button type="button" class="btnSubmit-result" onclick="window.location.href = '/'">취소</button>
+              </div>
+            </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    async function validateForm(event) {
+      event.preventDefault(); // 기본 폼 제출 동작을 막음
+  
+      const newPasswd = document.getElementById('new_passwd').value;
+      const confirmPasswd = document.getElementById('new_passwd_confirm').value;
+  
+      if (!newPasswd) {
+        alert('새 비밀번호를 입력해 주세요.');
+        document.getElementById('new_passwd').focus();
+        return false;
+      }
+  
+      if (!confirmPasswd) {
+        alert('새 비밀번호 확인을 입력해 주세요.');
+        document.getElementById('new_passwd_confirm').focus();
+        return false;
+      }
+  
+      if (newPasswd !== confirmPasswd) {
+        alert('새 비밀번호 확인이 정확하지 않습니다. 다시 입력해주세요.');
+        document.getElementById('new_passwd_confirm').value = '';
+        document.getElementById('new_passwd_confirm').focus();
+        return false;
+      }
+
+      const userId = document.querySelector('input[name="userid"]').value;
+      const userEmail = document.querySelector('input[name="user_email"]').value;
+      const userMobile = document.querySelector('input[name="user_mobile"]').value;
+  
+      try {
+        const response = await fetch(`/auth/changed-pw`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: new URLSearchParams({
+            'userid': userId,
+            'user_email': userEmail,
+            'user_mobile': userMobile,
+            'new_passwd': newPasswd
+          })
+        });
+        const data = await response.json();
+  
+        if (!data.success) {
+          alert('비밀번호 입력 조건을 다시 한번 확인해주세요.\n\n' +
+                '※ 비밀번호 입력 조건\n' +
+                '- 대소문자/숫자/특수문자 조합, 8자~16자\n' +
+                '- 입력 가능 특수문자\n' +
+                '   ~ ` ! @ # $ % ^ ( ) * _ - = { } [ ] | ; : < > , . ? /\n' +
+                '- 공백 입력 불가능\n' +
+                '- 연속된 문자, 숫자 사용 불가능\n' +
+                '- 동일한 문자, 숫자를 반복해서 사용 불가능');
+          document.getElementById('new_passwd').focus();
+          document.getElementById('new_passwd').value = '';
+          document.getElementById('new_passwd_confirm').value = '';
+          return false;
+        } else {
+          // 비밀번호가 성공적으로 변경된 경우
+          alert('비밀번호가 성공적으로 변경되었습니다.');
+          window.location.href = '/auth/login';
+          return true;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('비밀번호 변경 중 오류가 발생했습니다.');
+        return false;
+      }
+    }
+  
+    document.getElementById('preferenceForm').addEventListener('submit', validateForm);
+  </script>  
+{% endblock %}
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('mymojji.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('mymojji.static', filename='css/style_closet.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="division_box">
+        <p class="article_title">중분류</p>
+        <div class="cg_container">
+          <div id="myBtnContainer">
+            <button class="btn" onclick="filterSelection('all', true)"> Show all</button>
+            <button class="btn" onclick="filterSelection('top')"> 상 의</button>
+            <button class="btn" onclick="filterSelection('bottom')"> 하 의</button>
+            <button class="btn" onclick="filterSelection('outer')"> 아우터</button>
+            <button class="btn" onclick="filterSelection('dress')"> 드레스</button>
+          </div>
+          
+          <div class="detail_container">
+            <button class="filterDiv top" data-type="short_sleeve_top" onclick="highlightButton(this, 'top')">반팔 티셔츠</button>
+            <button class="filterDiv top" data-type="long_sleeve_top" onclick="highlightButton(this, 'top')">긴팔 티셔츠</button>
+            <button class="filterDiv top" data-type="vest" onclick="highlightButton(this, 'top')">조끼</button>
+            <button class="filterDiv top" data-type="sling" onclick="highlightButton(this, 'top')">민소매</button>
+            <button class="filterDiv bottom" data-type="shorts" onclick="highlightButton(this, 'bottom')">반바지</button>
+            <button class="filterDiv bottom" data-type="trousers" onclick="highlightButton(this, 'bottom')">바지</button>
+            <button class="filterDiv bottom" data-type="skirt" onclick="highlightButton(this, 'bottom')">스커트</button>
+            <button class="filterDiv outer" data-type="short_sleeve_outer" onclick="highlightButton(this, 'outer')">반팔 아우터</button>
+            <button class="filterDiv outer" data-type="long_sleeve_outer" onclick="highlightButton(this, 'outer')">긴팔 아우터</button>
+            <button class="filterDiv dress" data-type="short_sleeve_dress" onclick="highlightButton(this, 'dress')">미니원피스</button>
+            <button class="filterDiv dress" data-type="long_sleeve_dress" onclick="highlightButton(this, 'dress')">롱원피스</button>
+            <button class="filterDiv dress" data-type="vest_dress" onclick="highlightButton(this, 'dress')">조끼원피스</button>
+            <button class="filterDiv dress" data-type="sling_dress" onclick="highlightButton(this, 'dress')">민소매원피스</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    filterSelection("all");
+    function filterSelection(c) {
+      var x, i;
+      x = document.getElementsByClassName("filterDiv");
+      if (c == "all") c = "";
+      // Add the "show" class (display:block) to the filtered elements, and remove the "show" class from the elements that are not selected
+      for (i = 0; i < x.length; i++) {
+        w3RemoveClass(x[i], "show");
+        if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+      }
+      if (c == "") { // "all" 버튼 클릭 시 하위 카테고리 버튼 초기화
+        resetSubcategoryButtons();
+      }
+    }
+    
+    // Show filtered elements
+    function w3AddClass(element, name) {
+      var i, arr1, arr2;
+      arr1 = element.className.split(" ");
+      arr2 = name.split(" ");
+      for (i = 0; i < arr2.length; i++) {
+        if (arr1.indexOf(arr2[i]) == -1) {
+          element.className += " " + arr2[i];
+        }
+      }
+    }
+    
+    // Hide elements that are not selected
+    function w3RemoveClass(element, name) {
+      var i, arr1, arr2;
+      arr1 = element.className.split(" ");
+      arr2 = name.split(" ");
+      for (i = 0; i < arr2.length; i++) {
+        while (arr1.indexOf(arr2[i]) > -1) {
+          arr1.splice(arr1.indexOf(arr2[i]), 1);
+        }
+      }
+      element.className = arr1.join(" ");
+    }
+
+    // Add active class to the current control button (highlight it)
+    var btnContainer = document.getElementById("myBtnContainer");
+    var btns = btnContainer.getElementsByClassName("btn");
+    for (var i = 0; i < btns.length; i++) {
+      btns[i].addEventListener("click", function() {
+        var current = document.getElementsByClassName("active");
+        current[0].className = current[0].className.replace(" active", "");
+        this.className += " active";
+      });
+    }
+  
+    function setActiveButton(category) {
+      var buttons = document.querySelectorAll('#myBtnContainer .btn');
+      buttons.forEach(function(button) {
+          button.classList.remove('active');
+      });
+      if (category === 'all') {
+          document.querySelector('button[onclick="highlightButton(this, \'all\')"]').classList.add('active');
+      } else {
+          buttons.forEach(function(button) {
+              if (button.getAttribute('onclick').includes(category)) {
+                  button.classList.add('active');
+              }
+          });
+      }
+    }
+  
+    function highlightButton(button, category) {
+      var buttons = document.querySelectorAll('.filterDiv');
+      buttons.forEach(function(btn) {
+        btn.classList.remove('highlight');
+        btn.classList.remove('active');
+      });
+      button.classList.add('highlight');
+      button.classList.add('active');
+      filterSelection(category); // 상위 카테고리만 보여지도록 필터링
+      setActiveButton(category); // 상위 카테고리 버튼 활성화
+
+      // 모든 이미지를 숨김
+      const images = document.querySelectorAll('.closet_img img');
+      images.forEach(img => img.style.display = 'none');
+
+      // 클릭한 버튼의 data-type과 일치하는 이미지만 보이기
+      const dataType = button.getAttribute('data-type');
+      const matchingImages = document.querySelectorAll(`.closet_img img[data-type="${dataType}"]`);
+      matchingImages.forEach(img => img.style.display = 'block');
+    }
+
+    function resetSubcategoryButtons() {
+      var buttons = document.querySelectorAll('.filterDiv');
+      buttons.forEach(function(button) {
+        button.classList.remove('highlight');
+        button.classList.remove('active');
+      });
+
+      // 모든 이미지를 보이기
+      const images = document.querySelectorAll('.closet_img img');
+      images.forEach(img => img.style.display = 'block');
+    }
+  </script>
+  <section>
+    <div class="inner">
+      <div class="gallery_container">
+        <div class="closet_gallery">
+          {% for item in items %}
+            <div class="gallery">
+              <div class="closet_img">
+                <img src="{{ item['image_url'] }}" alt="선택된 옷 이미지" data-type="{{ item['item_name'] }}" onclick="redirectToClosetImg('{{ item['_id'] }}')">
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    function redirectToClosetImg(itemId) {
+      window.location.href = '/mymojji/closet_img/' + itemId;
+    }
+  </script>
+{% endblock %}
+</body>
+</html>

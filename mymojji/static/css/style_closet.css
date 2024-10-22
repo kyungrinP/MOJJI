@@ -1,0 +1,188 @@
+.closet_container {
+  width: 100%;
+  margin-top: 130px;
+}
+
+.gallery_container {
+  width: 100%;
+  margin: 50px 0 150px;
+}
+
+.closet_title {
+  font-size: 30px;
+  font-family: "SEBANG_Gothic_Bold", sans-serif;
+  font-style: normal;
+  margin: 0;
+}
+
+@font-face {
+  font-family: 'SEBANG_Gothic_Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.article_title {
+  text-align: center;
+  padding: 10px;
+  color: black;
+  white-space: nowrap;
+}
+
+.division_box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+  color: black;
+}
+
+.myBtnContainer {
+  width: 100%;
+  height: 100%;
+  border-top: 1px solid #cacaca;
+}
+
+.cg_container {
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+}
+
+.filterDiv {
+  float: left;
+  color: black;
+  width: max-content;
+  max-width: 200px;
+  line-height: 40px;
+  text-align: center;
+  margin: 5px 18px;
+  display: none;
+  border: none;
+  outline: none;
+  background-color: #fff;
+}
+
+.filterDiv:hover {
+  cursor: pointer;
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.filterDiv.active {
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.show {
+  display: block;
+}
+
+.detail_container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-top: 10px;
+}
+
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  background-color: #ffffff;
+  padding: 12px 16px;
+  cursor: pointer;
+}
+
+button {
+  color: black;
+}
+
+.btn:hover {
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.btn.active {
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.closet_gallery {
+  width: 100%;
+  position: relative;
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.gallery {
+  flex: 1 1 calc((100% - 70px) / 8);
+  height: auto;
+  margin: 10px;
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+  max-width: calc((100% - 70px) / 8);
+}
+
+.closet_img img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.closet_img img:hover {
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 1024px) {
+  .inner {
+    width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+    height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+    margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+    padding: 0.5rem 2rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+    overflow: hidden;
+  }
+
+  .codishop_img {
+    width: 350px;
+  }
+
+  .codishop_img:not(:first-child) {
+    display: none; /* 첫 번째 이미지 이후의 이미지를 숨깁니다. */
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .detail_container {
+    -webkit-overflow-scrolling: touch;
+    width: 90%;
+  }
+
+  .filterDiv {
+    margin: 8px;
+  }
+
+  .gallery {
+    flex: 1 1 calc(50% - 20px);
+    max-width: calc(50% - 10px); /* 최대 너비를 50%로 설정 */
+  }
+
+  .division_box {
+    margin-left: 20px;
+  }
+}

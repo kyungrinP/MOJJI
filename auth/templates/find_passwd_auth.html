@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_find_passwd_auth_cg.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="findid-container">
+        <div class="findid-title">
+          <h2>FIND PASSWORD</h2>
+        </div>
+        <div class="findid-boxtitle">
+          <h3>본인확인 인증</h3>
+          <ul class="ec-base-desc">
+            <li>
+                <strong class="term">본인확인 인증</strong>
+                <span class="desc">
+                    <input id="user_verification_method_type0" name="user_verification_method_type" value="email" type="radio">
+                    <label for="user_verification_method_type0">이메일</label>
+                    <input id="user_verification_method_type1" name="user_verification_method_type" value="mobile" type="radio">
+                    <label for="user_verification_method_type1" >휴대폰</label>
+                </span>
+            </li>
+            <li id="user_verification_email_info">
+              <strong class="term">이메일</strong>
+              <span class="desc">
+                  <strong class="txtEm">{{ user_email }}</strong> 
+                  <a href="#none" class="btnNormal">인증번호 받기</a>
+              </span>
+            </li>
+            <li id="user_verification_mobile_info">
+              <strong class="term">휴대폰 번호</strong>
+              <span class="desc">
+                  <strong class="txtEm number">{{ user_mobile }}</strong>
+                  <a href="#none" class="btnNormal">인증번호 받기</a>
+              </span>
+            </li>
+            <li>
+              <strong class="term">인증번호</strong>
+              <div class="desc">
+                  <input id="verification_code" name="verification_code" class="lostInput" type="password">
+                  <div class="txtInfo">
+                      <p id="user_verification_email_desc" >1회 발송된 인증번호의 유효 시간은 60분이며, <br>1회 인증번호 발송 후 30초 이후에 재전송이 가능합니다.</p>
+                      <p id="user_verification_mobile_desc" >1회 발송된 인증번호의 유효 시간은 3분이며, <br>1회 인증번호 발송 후 30초 이후에 재전송이 가능합니다.</p>
+                  </div>
+              </div>
+            </li>
+          <div class="ec-base-button">
+            <form id="preferenceForm" action="/auth/find_passwd_change" method="POST">
+              <input type="hidden" name="user_id" value="{{ user_id }}" />
+              <input type="hidden" name="user_mobile" value="{{ user_mobile }}" />
+              <input type="hidden" name="user_email" value="{{ user_email }}" />
+              <button type="submit" class="btnSubmit-result">확인</button>
+              <button type="button" class="btnSubmit-result" onclick="window.location.href = '/'">취소</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const emailRadio = document.getElementById('user_verification_method_type0');
+      const phoneRadio = document.getElementById('user_verification_method_type1');
+      const emailLabel = document.querySelector('label[for="user_verification_method_type0"]');
+      const phoneLabel = document.querySelector('label[for="user_verification_method_type1"]');
+      const emailInfo = document.getElementById('user_verification_email_info');
+      const phoneInfo = document.getElementById('user_verification_mobile_info');
+      const emailDesc = document.getElementById('user_verification_email_desc');
+      const phoneDesc = document.getElementById('user_verification_mobile_desc');
+      const selectedMethod = {{ Method | tojson }}; // 서버에서 전달된 selected_method 값을 가져옵니다.
+      
+      function toggleView() {
+        if (emailRadio.checked) {
+          emailInfo.style.display = 'block';
+          phoneInfo.style.display = 'none';
+          emailDesc.style.display = 'block';
+          phoneDesc.style.display = 'none';
+        } else if (phoneRadio.checked) {
+          emailInfo.style.display = 'none';
+          phoneInfo.style.display = 'block';
+          emailDesc.style.display = 'none';
+          phoneDesc.style.display = 'block';
+        }
+      }
+
+      function setInitialState() {
+        if (selectedMethod === "email") {
+          emailRadio.checked = true;
+          phoneRadio.style.display = 'none';
+          phoneLabel.style.display = 'none';
+        } else if (selectedMethod === "phone") {
+          phoneRadio.checked = true;
+          emailRadio.style.display = 'none';
+          emailLabel.style.display = 'none';
+        }
+        toggleView();
+      }
+
+      emailRadio.addEventListener('change', toggleView);
+      phoneRadio.addEventListener('change', toggleView);
+
+      // 초기 상태 설정
+      setInitialState();
+    });
+  </script>
+{% endblock %}
+</body>
+</html>

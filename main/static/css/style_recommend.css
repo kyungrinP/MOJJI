@@ -1,0 +1,164 @@
+.result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 130px;
+}
+
+.result-title {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid;
+}
+
+.result-icon {
+  width: 75px;
+  padding: 0 15px;
+}
+
+.result-name {
+  font-size: 35px;
+  font-family: "Do Hyeon", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+  display: inline-block;
+  width: auto;
+  white-space: nowrap;
+}
+
+.result-desc-container {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.result-desc-container p {
+  display: inline-block;
+}
+
+.result-desc {
+  text-decoration: underline;
+}
+
+#rotate {
+  font-size: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 60px;
+  margin-bottom: 20px;
+}
+
+.recom_container {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 50px;
+}
+
+.image-container {
+  position: relative;
+  display: inline-block;
+  width: 400px;
+  cursor: pointer;
+}
+
+.recom_codi {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.heart-frame {
+  position: absolute;
+  font-size: 25px;
+  padding: 10px 60px;
+  bottom: 10px;
+  left: -30px;
+  z-index: 10; /* 아이콘이 이미지 위에 올라가도록 설정합니다. */
+  color: red; /* 하트 색상 설정 */
+  cursor: pointer;
+}
+
+.codi_container {
+  background-color: #ffd3b8;
+  max-width: 1300px;
+  height: 100%;
+  margin-top: 50px;
+  margin-bottom: 100px;
+  margin: 50px auto;
+}
+
+.codi-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.result-codi {
+  font-size: 29px;
+  font-family: "Do Hyeon", sans-serif;
+  margin: 50px 0;
+}
+
+.codishop_container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+}
+
+.codishop_img {
+  width: 400px;
+  padding-bottom: 80px;
+  margin: 0 auto;
+}
+
+.divider {
+  width: 1px; /* 세로 구분선의 너비 */
+  background-color: #000; /* 세로 구분선의 색상 */
+  height: 600px;
+}
+
+@media only screen and (max-width: 1024px) {
+  .inner {
+    width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+    height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+    margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+    padding: 0.5rem 2rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+    overflow: hidden;
+  }
+
+  .codishop_img {
+    width: 350px;
+  }
+
+  .codishop_img:not(:first-child) {
+    display: none; /* 첫 번째 이미지 이후의 이미지를 숨깁니다. */
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .heart-frame {
+    bottom: 0px;
+    left: -50px;
+  }
+
+  .result-name {
+    font-size: 28px;
+  }
+
+  #rotate {
+    margin-right: 10px;
+    font-size: 20px;
+  }
+}

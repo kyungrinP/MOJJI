@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_find_passwd_info.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="findid-container">
+        <div class="findid-title">
+          <h2>FIND PASSWORD</h2>
+        </div>
+        <div class="findid-boxtitle">
+          <h3>비밀번호 찾기</h3>
+          <p class="check">
+            <input id="check_method1" name="check_method" type="radio" value="email" checked="checked">
+            <label for="check_method1">이메일</label>
+            <input id="check_method2" name="check_method" type="radio" value="phone">
+            <label for="check_method2">휴대폰번호</label>
+          </p>
+          <form id="find_pw" method="POST" action="/auth/find_passwd_auth" onsubmit="return validateForm()">
+            <input type="hidden" id="selected_method" name="selected_method" value="email">
+            <p id="userid_view" class="userid">
+              <strong id="userid_lable">아이디</strong>
+              <input id="userid" name="userid" class="lostInput" type="text">
+            </p>
+            <p id="name_view" class="name">
+              <strong id="name_lable">이름</strong>
+              <input id="name" name="name" class="lostInput" type="text">
+            </p>
+            <p id="email_view" class="email">
+              <strong>이메일로 찾기</strong>
+              <input id="email" name="email" class="lostInput" type="text">
+            </p>
+            <p id="phone_view" class="phone">
+              <strong>휴대폰번호로 찾기</strong>
+              <input id="phone" name="phone" class="lostInput" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </p>
+            <div class="ec-base-button">
+              <button type="submit" class="btnSubmit">확인</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const emailRadio = document.getElementById('check_method1');
+      const phoneRadio = document.getElementById('check_method2');
+      const emailView = document.getElementById('email_view');
+      const phoneView = document.getElementById('phone_view');
+      const selectedMethod = document.getElementById('selected_method');
+      const errorMessage = "{{ error }}";
+  
+      function toggleView() {
+        if (emailRadio.checked) {
+          emailView.style.display = 'block';
+          phoneView.style.display = 'none';
+          selectedMethod.value = 'email';
+        } else if (phoneRadio.checked) {
+          emailView.style.display = 'none';
+          phoneView.style.display = 'block';
+          selectedMethod.value = 'phone';
+        }
+      }
+  
+      function validateForm() {
+        const userid = document.getElementById('userid').value.trim();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const emailChecked = document.getElementById('check_method1').checked;
+        const phoneChecked = document.getElementById('check_method2').checked;
+  
+        if (userid === '') {
+          alert('아이디 항목은 필수 입력값입니다.');
+          document.getElementById('userid').focus();
+          return false;
+        }
+  
+        if (name === '') {
+          alert('이름을 입력하세요.');
+          document.getElementById('name').focus();
+          return false;
+        }
+  
+        if (emailChecked && email === '') {
+          alert('이메일을 입력하세요.');
+          document.getElementById('email').focus();
+          return false;
+        }
+  
+        if (phoneChecked && phone === '') {
+          alert('휴대폰번호를 입력하세요.');
+          document.getElementById('phone').focus();
+          return false;
+        }
+  
+        return true;
+      }
+  
+      // 초기 상태 설정
+      toggleView();
+  
+      // 이벤트 리스너 설정
+      emailRadio.addEventListener('change', toggleView);
+      phoneRadio.addEventListener('change', toggleView);
+  
+      // 에러 메시지 표시
+      if (errorMessage) {
+        alert(errorMessage);
+      }
+  
+      // 폼 제출 시 validateForm 함수를 호출하도록 설정
+      const form = document.getElementById('find_pw');
+      form.addEventListener('submit', function(event) {
+        if (!validateForm()) {
+          event.preventDefault();
+        }
+      });
+    });
+  </script>
+{% endblock %}
+</body>
+</html>

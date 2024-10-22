@@ -1,0 +1,505 @@
+.result-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 130px;
+}
+
+.result-title {
+  padding: 10px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 500px;
+  height: 100%;
+  border-bottom: 2px solid;
+}
+
+.result-icon {
+  width: 75px;
+  padding: 0 15px;
+}
+
+.result-name {
+  font-size: 35px;
+  font-family: "Do Hyeon", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+}
+
+.result-desc-container {
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.radio_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.radio_select_container {
+  padding: 0 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.radio_select_container:hover {
+  color: #FFBE98;
+}
+
+.radio_select_container input {
+  opacity: 0;
+  cursor: pointer;
+}
+
+.radio_select_container input:checked ~ .checkmark {
+  color: #FFBE98;
+}
+
+.user_remove_bg {
+  display: flex;
+  justify-content: center;
+  margin: 50px 0;
+}
+
+.user_closet_one {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.remove_bg {
+  max-width: 500px;
+  max-height: 500px;
+  width: auto;
+  height: auto;
+  margin: 20px;
+  object-fit: contain;
+}
+
+.myBtnContainer {
+  width: 100%;
+  height: 100%;
+  border-top: 1px solid #cacaca;
+}
+
+.cg_container {
+  width: 100%;
+  height: 100%;
+  margin-top: 10px;
+}
+
+.filterDiv {
+  float: left;
+  color: black;
+  width: max-content;
+  max-width: 200px;
+  line-height: 30px;
+  text-align: center;
+  margin: 18px;
+  display: none;
+  border: none;
+  outline: none;
+  background-color: #fff;
+}
+
+.filterDiv:hover {
+  cursor: pointer;
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.highlight {
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.show {
+  display: block;
+}
+
+.detail_container {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  white-space: nowrap;
+  margin-top: 10px;
+}
+
+/* Style the buttons */
+.btn {
+  border: none;
+  outline: none;
+  background-color: #ffffff;
+  padding: 12px 13px;
+  cursor: pointer;
+  text-wrap: nowrap;
+}
+
+button {
+  color: black;
+}
+
+.btn:hover {
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.btn.active {
+  color: #FFBE98;
+  text-decoration: underline;
+  text-underline-position: under;
+}
+
+.division_box {
+  border-top: 1px solid #cacaca;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 5;
+  position: relative;
+  padding-top: 20px;
+  color: #000;
+}
+
+.article_title {
+  width: 100px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  color: black;
+  white-space: nowrap;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  padding: 3px;
+}
+
+.division_color {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  padding: 10px;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.tooltip {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  flex-direction: column; /* 버튼 내의 요소를 세로로 배치 */
+  align-items: center; /* 버튼 내의 요소를 가운데 정렬 */
+  background-color: #fff;
+  transition: transform 0.3s ease; /* 모든 툴팁에 애니메이션 효과 추가 */
+  border: none; /* 버튼의 기본 테두리 제거 */
+  cursor: pointer;
+}
+
+.tooltip.active {
+  transform: translate(0, -15px); /* 활성화된 툴팁을 위로 이동 */
+  z-index: 2;
+  color: #FFBE98;
+  /* color: rgb(0, 120, 255); */
+  line-height: 12px;
+  z-index: 99;
+}
+
+.color_text {
+  margin-top: 5px; /* 이미지와 텍스트 사이의 간격을 조정 */
+  text-align: center; /* 텍스트를 가운데 정렬 */
+  font-size: 12px;
+}
+
+.tooltip .black{
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -30px 0;
+}
+
+.tooltip .white {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: 0 0;
+}
+
+.tooltip .red {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -330px 0;
+}
+
+.tooltip .orange {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -360px 0;
+}
+
+.tooltip .yellow {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -270px 0;
+}
+
+.tooltip .green {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -150px 0;
+}
+
+.tooltip .sky {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+}
+
+.tooltip .blue {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+}
+
+.tooltip .denim {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -210px 0;
+}
+
+.tooltip .navy {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+}
+
+.tooltip .khaki {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -870px 0;
+}
+
+.tooltip .pink {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -1320px 0;
+}
+
+.tooltip .purple {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -240px 0;
+}
+
+.tooltip .camel {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -750px 0;
+}
+
+.tooltip .beige {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -120px 0;
+}
+
+.tooltip .brown {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -90px 0;
+}
+
+.tooltip .ivory {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -660px 0;
+}
+
+.tooltip .grey {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+  object-position: -60px 0;
+}
+
+.tooltip .etc {
+  width: 23px;
+  height: 23px;
+  object-fit: none;
+}
+
+.submit_container {
+  margin: 100px 0;
+  text-align: center;
+}
+
+.delete_container {
+  margin: 100px 100px;
+  text-align: center;
+}
+
+#info_delete{
+  width: 100px;
+  height: 50px;
+  border: none;
+  background-color: #FFBE98;
+  color: #fff;
+  font-weight: 400;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 20px;
+  transition-duration: 0.4s;
+}
+
+#info_save {
+  font-weight: 500;
+  padding: 16px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 20px 0;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+#preferenceForm button {
+  background-color: white; 
+  color: black; 
+  border: 2.5px solid #fdbe96;
+}
+
+#preferenceForm button:hover {
+  background-color: #fdbe96;
+  color: white;
+}
+
+#info_edit {
+  width: 100px;
+  height: 50px;
+  border: none;
+  background-color: #FFBE98;
+  color: #fff;
+  font-weight: 400;
+  border-radius: 5px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+}
+
+/* 로딩 화면 스타일 */
+.loading-overlay {
+  display: none; /* 기본적으로 숨김 */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.ldBar {
+  position: relative;
+  width: 500px;
+  height: 500px;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.background-image, .center-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.background-image {
+  width: 160px;
+  height: 160px;
+}
+
+.center-image {
+  width: 80px;
+  height: 80px;
+}
+
+.loading-percentage {
+  text-align: center;
+  font-size: 1.2em;
+  color: #FFF;
+  position: relative;
+  top: -150px;
+}
+
+@media only screen and (max-width: 1024px) {
+  .inner {
+    width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+    height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+    margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+    padding: 0.5rem 2rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+    overflow: hidden;
+  }
+
+  #myBtnContainer {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .btn:first-child {
+    width: 100%;
+    text-align: left; /* 왼쪽 정렬 */
+  }
+
+  .detail_container, .division_color {
+    -webkit-overflow-scrolling: touch;
+    width: 85%;
+  }
+
+  .filterDiv {
+    margin: 8px;
+  }
+
+  .result-name {
+    font-size: 30px;
+  }
+
+  .remove_bg {
+    max-height: 300px;
+  }
+}

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_register.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="register_container">
+        <div class="register_title">
+          <h2>REGISTER</h2>
+        </div>
+      </div>
+      <div class="register_base_table">
+        <form id="registerForm" action="/auth/register_new" method="post" onsubmit="return checkForm()">
+          <h3 class="register_personal">기본정보</h3>
+          <table>
+            <colgroup>
+              <col style="width:200px;">
+              <col style="width:auto;">
+            </colgroup>
+            <tbody>
+              <tr>
+                <th>아이디</th>
+                <td>
+                  <input id="member_id" name="member_id" class="inputTypeText" type="text" required>
+                  <span id="idMsg"></span> (영문소문자/숫자 조합, 4~16자)
+                  <button type="button" onclick="checkDuplicateId()" name="dbCheckID" class="btnNormal">중복 확인</button>
+                  <input type="hidden" id="idDuplication" name="idDuplication" value="idUncheck"/>
+                </td>
+              </tr>
+              <tr>
+                <th>비밀번호</th>
+                <td>
+                  <div class="eTooltip">
+                    <input id="passwd" name="passwd" required autocomplete="off" maxlength="16" type="password" aria-autocomplete="list">
+                    (영문 대소문자/숫자/특수문자 조합, 8자~16자)
+                    <div class="ec-base-tooltip typeUpper">
+                      <div class="content">
+                        <strong class="txtWarn">※ 비밀번호 입력 조건</strong>
+                        <ul class="ec-base-help typeDash gBlank10 txtWarn">
+                          - 대소문자/숫자/특수문자 조합, 8자~16자<br>
+                          - 입력 가능 특수문자<br>
+                          &nbsp;&nbsp;&nbsp;  ~ ` ! @ # $ % ^ ( ) * _ - = { } [ ] | ; : &lt; &gt; , . ? /<br>
+                          - 공백 입력 불가능<br>
+                          - 연속된 문자, 숫자 사용 불가능<br>
+                          - 동일한 문자, 숫자를 반복해서 사용 불가능<br>
+                          - 아이디 포함 불가능
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>비밀번호 확인</th>
+                <td>
+                  <input id="user_passwd_confirm" name="user_passwd_confirm" required autocomplete="off" maxlength="16" type="password" onkeyup="checkPasswordMatch()">
+                  <span id="pwConfirmMsg" class=""></span>
+                </td>
+              </tr>
+              <tr>
+                <th>비밀번호 확인 질문</th>
+                <td>
+                  <select id="hint" name="hint" required>
+                    <option value="hint_01">기억에 남는 추억의 장소는?</option>
+                    <option value="hint_02">자신의 인생 좌우명은?</option>
+                    <option value="hint_03">자신의 보물 제1호는?</option>
+                    <option value="hint_04">가장 기억에 남는 선생님 성함은?</option>
+                    <option value="hint_05">타인이 모르는 자신만의 신체비밀이 있다면?</option>
+                    <option value="hint_06">추억하고 싶은 날짜가 있다면?</option>
+                    <option value="hint_07">받았던 선물 중 기억에 남는 독특한 선물은?</option>
+                    <option value="hint_08">유년시절 가장 생각나는 친구 이름은?</option>
+                    <option value="hint_09">인상 깊게 읽은 책 이름은?</option>
+                    <option value="hint_10">읽은 책 중에서 좋아하는 구절이 있다면?</option>
+                    <option value="hint_11">자신이 두번째로 존경하는 인물은?</option>
+                    <option value="hint_12">친구들에게 공개하지 않은 어릴 적 별명이 있다면?</option>
+                    <option value="hint_13">초등학교 때 기억에 남는 짝꿍 이름은?</option>
+                    <option value="hint_14">다시 태어나면 되고 싶은 것은?</option>
+                    <option value="hint_15">내가 좋아하는 캐릭터는?</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <th>비밀번호 확인 답변</th>
+                <td>
+                  <input id="hint_answer" name="hint_answer" required class="inputTypeText" type="text" pattern="^[가-힣]+$" title="한글만 입력 가능합니다.">
+                </td>
+              </tr>
+              <tr>
+                <th scope="row" id="nameTitle">이름</th>
+                <td>
+                  <input id="nameContents" name="nameContents" type="text" class="inputTypeText" required pattern="^[가-힣]+$" title="한글만 입력 가능합니다.">
+                </td>
+              </tr>
+              <tr>
+                <th>주소</th>
+                <td>
+                  <input type="text" id="postcode1" name="postcode1" class="inputTypeText" readonly="readonly" placeholder="우편번호">
+                  <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기" class="btnNormal" id="postBtn"><br>
+                  <input id="addr1" name="addr1" type="text" placeholder="주소" class="inputTypeText" readonly="readonly"><br>
+                  <input type="text" id="addr2" name="addr2" class="inputTypeText" placeholder="상세주소">
+                  <input type="text" id="extraAddress" name="extraAddress" readonly="readonly" class="inputTypeText" placeholder="참고항목">
+                </td>
+              </tr>
+              <tr>
+                <th>휴대전화</th>
+                <td>
+                  <select id="mobile1" name="mobile[]">
+                    <option value="010">010</option>
+                    <option value="011">011</option>
+                    <option value="016">016</option>
+                    <option value="017">017</option>
+                    <option value="018">018</option>
+                    <option value="019">019</option>
+                  </select>
+                  -<input id="mobile2" name="mobile[]" maxlength="4" required type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')">-
+                  <input id="mobile3" name="mobile[]" maxlength="4" required type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')">                               
+                </td>
+              </tr>
+              <tr>
+                <th>이메일</th>
+                <td>
+                  <input id="email1" name="email1" required type="text" placeholder="hello@mojji.com" oninput="validateEmail()">
+                  <span id="emailMsg"></span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="ec-base-button">
+            <button type="submit" class="btnSubmitFix sizeM">SUBMIT</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+  <script src="{{ url_for('auth.static', filename='js/register.js') }}"></script>
+{% endblock %}
+</body>
+</html>

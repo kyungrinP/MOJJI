@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_login.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  {% extends "navbar.html"%}
+
+  {% block content %}
+  <section>
+    <div class="inner">
+      <div class="login-container">
+        <div class="login-title">
+          <h2>LOG-IN<h2>
+        </div>
+        <div class="login-box">
+          <form id="login_form" method="POST" action="/auth/login" onsubmit="return validateForm()">
+            <label class="id ePlaceholder" title="ID">
+              <input id="member_id" name="member_id" class="inputTypeText" placeholder="ID" type="text">
+            </label>
+            <label class="password ePlaceholder" title="PASSWORD">
+              <input id="member_passwd" name="member_passwd" class="inputTypeText" autocomplete="off" type="password" placeholder="PASSWORD">
+            </label>
+            <div class="logMiddleArea">
+              <ul class="findInfo">
+                <li><a href="find_id">FORGOT ID</a></li>
+                <li><a href="find_passwd_info">FORGOT PASSWORD</a></li>
+              </ul>
+            </div>
+            <ul class="logBtnArea">
+              <li class="btnLog-in"><button class="loginbtn" type="submit">CONNECT!</button></li>
+              <li><button type="button" class="loginbtn" onclick="window.location.href='register'">REGISTER</button></li>
+            </ul>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script src="{{ url_for('auth.static', filename='js/login.js') }}"></script>
+{% endblock %}
+</body>
+</html>

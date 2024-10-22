@@ -1,0 +1,193 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0 auto;
+    color: #3f464d;
+    font-family: "Apple SD Gothic Neo", "Noto Sans KR", "Spoqa Han Sans Neo", "Sans-serif";
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'Apple SD Gothic Neo';
+    src: url('/static/font/AppleSDGothicNeoR.ttf') format('ttf');
+    font-weight: 400;
+    font-style: normal;
+  }
+  
+  .inner {
+    width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+    height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+    margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+    padding: 0.5rem 6rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+    overflow: hidden;
+  }
+  
+  header {
+    width: 100%;
+    height: auto;
+    background-color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  
+  section {
+    width: 100%;
+    background-color: #fff;
+    position: relative;
+  }
+  
+  .head-container {
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .luckiest-guy-regular {
+    font-family: "Luckiest Guy", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 32px;
+    color: #FFBE98;
+    margin: 1rem .5rem;
+    text-decoration: none;
+  }
+  
+  .head-logo {
+    display: flex;
+    align-items: center; /* 수직 가운데 정렬 */
+  }
+  
+  .navbar {
+    overflow: hidden;
+    font-family: "Concert One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    align-items: center;
+    display: flex;
+    justify-content: space-around;
+    width: fit-content;
+    height: 100%;
+  }
+  
+  .navbar a {
+    float: left;
+    font-size: 18px;
+    color:  #FFBE98;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  .navbar p {
+    float: left;
+    font-size: 18px;
+    color:  #FFBE98;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  .navbar .dropdown {
+    float: left;
+    overflow: hidden;
+  }
+  
+  .dropdown .dropbtn {
+    font-size: 18px;  
+    border: none;
+    outline: none;
+    color: #FFBE98;
+    padding: 14px 16px;
+    background-color: inherit;
+    font-family: inherit;
+    margin: 0;
+  }
+  
+  .navbar a:hover, .dropdown:hover .dropbtn {
+    background-color:  #FFBE98;
+    color: #ffffff;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    max-width: 93.27px;
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    float: none;
+    color: #FFBE98;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    text-align: left;
+  }
+  
+  .dropdown-content a:hover {
+    background-color: #FFBE98;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  footer {
+    border-top: 1px solid #e4e4e4;
+    background-color: #fefbf9;
+    padding: 1rem 0;
+  }
+  
+  .footer-message {
+    font-weight: bold;
+    color: #545e6f;
+    margin: 0.3rem 0.5rem;
+  }
+  
+  .footer-contact {
+    color: #545e6f;
+    margin: 0 0.5rem;
+  }
+  
+  .footer-copyright {
+    color: #545e6f;
+    margin: 1rem 0.5rem;
+  }
+  
+  @media only screen and (max-width: 1024px) {
+    .css-1ywg9ut {
+      display: none;
+    }
+  
+    .codi-container {
+      margin-top: 130px;
+      padding: 50px 0;
+    }
+  
+    .inner {
+      width: 100%; /* 가로 사이즈가 1200px 넘는 해상도에서는 max-width 설정 */
+      height: 100%; /* align-items 등으로 수직 가운데 정렬을 위해, 알맞은 height 설정이 필요함 */
+      margin: 0 auto; /* 가운데 정렬: 동일 요소에 width 가 설정되어 있을 때에만 적용 */
+      padding: 0.5rem 2rem; /* 좌우 padding 을 살짝 주어서, 좌우에 딱 붙지 않도록 함 */
+      overflow: hidden;
+    }
+  }
+
+/* 화면 너비가 480px 이하일 때 폰트 크기 더 작게 조절 */
+@media only screen and (max-width: 390px) {
+  .luckiest-guy-regular {
+      font-size: 26px;
+  }
+
+  .navbar a{
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('auth.static', filename='css/style_find_id.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+<section>
+  <div class="inner">
+    <div class="findid-container">
+      <div class="findid-title">
+        <h2>FIND ID</h2>
+        <ul>
+          <li>가입하신 방법에 따라 아이디 찾기가 가능합니다.</li>
+        </ul>
+      </div>
+      <div class="findid-boxtitle">
+        <h3>아이디 찾기</h3>
+        <p class="check">
+          <input id="check_method1" name="check_method" type="radio" checked="checked">
+          <label for="check_method1">이메일</label>
+          <input id="check_method2" name="check_method" type="radio">
+          <label for="check_method2">
+            <span id="search_type_mobile_label" style="display:inline;">휴대폰번호</span>
+          </label>
+        </p>
+        <form id="find_id" method="POST" action="/auth/find_id_result" onsubmit="return validateForm()">
+          <p id="name_view" class="name">
+            <strong id="name_label">이름</strong>
+            <input id="name" name="name" class="lostInput" type="text">
+          </p>
+          <p id="email_view" class="email">
+            <strong>이메일로 찾기</strong>
+            <input id="email" name="email" class="lostInput" type="text">
+          </p>
+          <p id="phone_view" class="phone">
+            <strong>휴대폰번호로 찾기</strong>
+            <input id="phone" name="phone" class="lostInput" type="text">
+          </p>
+          <div class="ec-base-button">
+            <button type="submit" class="btnSubmit">확인</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const emailRadio = document.getElementById('check_method1');
+    const phoneRadio = document.getElementById('check_method2');
+    const emailView = document.getElementById('email_view');
+    const phoneView = document.getElementById('phone_view');
+
+    function toggleView() {
+      if (emailRadio.checked) {
+        emailView.style.display = 'block';
+        phoneView.style.display = 'none';
+      } else if (phoneRadio.checked) {
+        emailView.style.display = 'none';
+        phoneView.style.display = 'block';
+      }
+    }
+
+    emailRadio.addEventListener('change', toggleView);
+    phoneRadio.addEventListener('change', toggleView);
+
+    // 초기 상태 설정
+    toggleView();
+  });
+
+  function validateForm() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const emailChecked = document.getElementById('check_method1').checked;
+    const phoneChecked = document.getElementById('check_method2').checked;
+
+    if (name === '') {
+      alert('이름을 입력하세요.');
+      document.getElementById('name').focus();
+      return false;
+    }
+
+    if (emailChecked && email === '') {
+      alert('이메일을 입력하세요.');
+      document.getElementById('email').focus();
+      return false;
+    }
+
+    if (phoneChecked && phone === '') {
+      alert('휴대폰번호를 입력하세요.');
+      document.getElementById('phone').focus();
+      return false;
+    }
+
+    return true;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const errorMessage = "{{ error }}";
+    if (errorMessage) {
+      alert(errorMessage);
+    }
+  });
+</script>
+{% endblock %}
+</body>
+</html>

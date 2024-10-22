@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+  <title>MOJJI</title>
+  <meta name="description" content="옷장 속의 의상들로 쉽고 스타일리시한 코디를 제안해주는 AI 패션 어플" />
+  <meta name="keywords" content="옷, 패션, 코디, 코디추천, AI, 어플" />
+  <meta name="author" content="Kyungrin" />
+
+  <!-- 일반적인 fabicon 설정 -->
+  <link rel="icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 아이폰용 fabicon 설정 -->
+  <link rel="apple-touch-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png"/>
+  <!-- 인터넷 익스플러오용 fabicon 설정-->
+  <link rel="short icon" type="image/x-icon" href="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-fashion-6122943.png" />
+
+  <!-- CSS Reset(1), 아이콘 폰트, 웹페이지 사용폰트, style.css -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css" />
+  <!-- https://fontawesome.com/start -->
+  <script src="https://kit.fontawesome.com/5816102a91.js" crossorigin="anonymous"></script>
+  <!-- Spoca Han Sans Neo: https://spoqa.github.io/spoqa-han-sans/ko-KR/ -->
+  <link href="//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSansNeo.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="{{ url_for('main_bp.static', filename='css/style_commond.css') }}">
+  <link rel="stylesheet" href="{{ url_for('main_bp.static', filename='css/style_result.css') }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Concert+One&family=Do+Hyeon&family=Luckiest+Guy&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+</head>
+<body>
+{% extends "navbar.html"%}
+
+{% block content %}
+  <section>
+    <div class="inner">
+      <div class="result-container">
+        <div class="result-title">
+          <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-stars-6360838.png" alt="타이틀 아이콘" class="result-icon">
+          <p class="result-name">MOJJI 분석 결과</p>
+          <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/free-icon-stars-6360838.png" alt="타이틀 아이콘" class="result-icon">
+        </div>
+      </div>
+      <div class="result-desc-container">
+        <p class="result-desc">분석 결과에 대해서 수정이 가능합니다.</p>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="inner">
+      <div class="radio_container">
+        {% set filtered_list = [] %}
+        {% for idx in range(options[1] | length) %}
+          {% set item = options[1][idx] %}
+          {% if item.strip() and idx is divisibleby 2 %}
+            {% set _ = filtered_list.append(options[0][idx]) %}
+            <label class="radio_select_container" data-item-name="{{ item }}">
+              <input type="radio" name="radio" {% if filtered_list | length == 1 %}checked="checked"{% endif %}>
+              <span class="checkmark">{{ options[0][idx] }}</span>
+            </label>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="user_remove_bg">
+        {% set image_dir = image_dir %}
+        {% for img in detect_img %}
+          {% if ('short_sleeve_top' in img or 'long_sleeve_top' in img or 'vest' in img or 'sling' in img) and 'dress' not in img %}
+            <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/{{ image_dir }}/{{ img }}" alt="top" class="remove_bg" data-item-name="top" style="display: none;">
+          {% elif 'shorts' in img or 'trousers' in img or 'skirt' in img %}
+            <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/{{ image_dir }}/{{ img }}" alt="bottom" class="remove_bg" data-item-name="bottom" style="display: none;">
+          {% elif 'short_sleeve_outer' in img or 'long_sleeve_outer' in img %}
+            <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/{{ image_dir }}/{{ img }}" alt="outer" class="remove_bg" data-item-name="outer" style="display: none;">
+          {% elif 'short_sleeve_dress' in img or 'long_sleeve_dress' in img or 'vest_dress' in img or 'sling_dress' in img %}
+            <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/{{ image_dir }}/{{ img }}" alt="dress" class="remove_bg" data-item-name="dress" style="display: none;">
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </section>  
+  <script>
+    function showImage(name) {
+      console.log('showImage called with name:', name); // 디버깅용 로그
+      
+      // itemName 값에 따라 name 변수를 변경
+      var name_cg;
+      if (['short_sleeve_top', 'long_sleeve_top', 'vest', 'sling'].includes(name)) {
+        name_cg = 'top';
+      } else if (['shorts', 'trousers', 'skirt'].includes(name)) {
+        name_cg = 'bottom';
+      } else if (['short_sleeve_outer', 'long_sleeve_outer'].includes(name)) {
+        name_cg = 'outer';
+      }  else if (['short_sleeve_dress', 'long_sleeve_dress','vest_dress','sling_dress'].includes(name)) {
+        name_cg = 'dress';
+      }  else {
+        name_cg = name; // 기본값: itemName 그대로 사용
+      }
+
+      var images = document.getElementsByClassName('remove_bg');
+      console.log('showImage called with name change:', name_cg); // 디버깅용 로그
+      for (var i = 0; i < images.length; i++) {
+        if (images[i].getAttribute('data-item-name') === name_cg) {
+            images[i].style.display = 'block';
+        } else {
+            images[i].style.display = 'none';
+        }
+      }
+    }
+  
+    function handleClick(event) {
+        var itemName = event.currentTarget.getAttribute('data-item-name');
+        console.log('handleClick called with itemName:', itemName); // 디버깅용 로그
+        showImage(itemName);
+    }
+  
+    document.addEventListener('DOMContentLoaded', function() {
+        var labels = document.getElementsByClassName('radio_select_container');
+        for (var i = 0; i < labels.length; i++) {
+            labels[i].addEventListener('click', handleClick);
+        }
+  
+        // Initial display setup
+        var checkedRadio = document.querySelector('input[name="radio"]:checked');
+        if (checkedRadio) {
+            var initialItemName = checkedRadio.closest('.radio_select_container').getAttribute('data-item-name');
+            showImage(initialItemName);
+        }
+    });
+  </script>
+  <section>
+    <div class="inner">
+      <div class="division_box">
+        <p class="article_title">중분류</p>
+        <div class="cg_container">
+          <div id="myBtnContainer">
+            <button class="btn" onclick="filterSelection('all', true)"> Show all</button>
+            <button class="btn" onclick="filterSelection('top')"> 상 의</button>
+            <button class="btn" onclick="filterSelection('bottom')"> 하 의</button>
+            <button class="btn" onclick="filterSelection('outer')"> 아우터</button>
+            <button class="btn" onclick="filterSelection('dress')"> 드레스</button>
+          </div>
+
+          <div class="detail_container">
+            <button class="filterDiv top" data-type="short_sleeve_top" onclick="highlightButton(this, 'top')">반팔 티셔츠</button>
+            <button class="filterDiv top" data-type="long_sleeve_top" onclick="highlightButton(this, 'top')">긴팔 티셔츠</button>
+            <button class="filterDiv top" data-type="sling" onclick="highlightButton(this, 'top')">민소매</button>
+            <button class="filterDiv bottom" data-type="shorts" onclick="highlightButton(this, 'bottom')">반바지</button>
+            <button class="filterDiv bottom" data-type="trousers" onclick="highlightButton(this, 'bottom')">바지</button>
+            <button class="filterDiv bottom" data-type="skirt" onclick="highlightButton(this, 'bottom')">스커트</button>
+            <button class="filterDiv outer" data-type="short_sleeve_outer" onclick="highlightButton(this, 'outer')">반팔 아우터</button>
+            <button class="filterDiv outer" data-type="long_sleeve_outer" onclick="highlightButton(this, 'outer')">긴팔 아우터</button>
+            <button class="filterDiv dress" data-type="short_sleeve_dress" onclick="highlightButton(this, 'dress')">미니 원피스</button>
+            <button class="filterDiv dress" data-type="long_sleeve_dress" onclick="highlightButton(this, 'dress')">롱 원피스</button>
+            <button class="filterDiv dress" data-type="vest_dress" onclick="highlightButton(this, 'dress')">조끼원피스</button>
+            <button class="filterDiv dress" data-type="sling_dress" onclick="highlightButton(this, 'dress')">민소매원피스</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <script>
+    function filterSelection(c, resetSync = false) {
+      var x, i;
+      x = document.getElementsByClassName("filterDiv");
+      if (c == "all") c = "";
+      for (i = 0; i < x.length; i++) {
+        w3RemoveClass(x[i], "show");
+        if (x[i].className.indexOf(c) > -1) w3AddClass(x[i], "show");
+      }
+      if (resetSync) {
+        deactivateRadioButtons();
+        setActiveButton('all'); // 'all' 버튼 활성화
+        deactivateSubCategoryButtons(); // 하위 카테고리 버튼 비활성화 추가
+      } else {
+        setActiveButton(c);
+      }
+    }
+
+    function deactivateSubCategoryButtons() {
+      var subCategoryButtons = document.querySelectorAll('.filterDiv');
+      subCategoryButtons.forEach(function(button) {
+        button.classList.remove('highlight');
+      });
+    }
+  
+    function w3AddClass(element, name) {
+      var i, arr1, arr2;
+      arr1 = element.className.split(" ");
+      arr2 = name.split(" ");
+      for (i = 0; i < arr2.length; i++) {
+        if (arr1.indexOf(arr2[i]) == -1) {
+          element.className += " " + arr2[i];
+        }
+      }
+    }
+  
+    function w3RemoveClass(element, name) {
+      var i, arr1, arr2;
+      arr1 = element.className.split(" ");
+      arr2 = name.split(" ");
+      for (i = 0; i < arr2.length; i++) {
+        while (arr1.indexOf(arr2[i]) > -1) {
+          arr1.splice(arr1.indexOf(arr2[i]), 1);
+        }
+      }
+      element.className = arr1.join(" ");
+    }
+  
+    function syncButtonWithRadio() {
+      var checkedRadio = document.querySelector('input[name="radio"]:checked');
+      if (checkedRadio) {
+        var checkmark = checkedRadio.nextElementSibling.textContent.trim();
+  
+        switch (checkmark) {
+          case '상 의':
+            filterSelection('top');
+            break;
+          case '하 의':
+            filterSelection('bottom');
+            break;
+          case '아우터':
+            filterSelection('outer');
+            break;
+          case '드레스':
+            filterSelection('dress');
+            break;
+          default:
+            filterSelection('all', true);
+        }
+      }
+    }
+  
+    function setActiveButton(category) {
+      var buttons = document.querySelectorAll('#myBtnContainer .btn');
+      buttons.forEach(function(button) {
+        button.classList.remove('active');
+      });
+      if (category === 'all') {
+        document.querySelector('button[onclick="filterSelection(\'all\', true)"]').classList.add('active');
+      } else {
+        buttons.forEach(function(button) {
+          if (button.getAttribute('onclick').includes(category)) {
+            button.classList.add('active');
+          }
+        });
+      }
+    }
+  
+    function deactivateRadioButtons() {
+      var radioButtons = document.querySelectorAll('input[name="radio"]');
+      radioButtons.forEach(function(radio) {
+        radio.checked = false;
+      });
+    }
+  
+    function highlightButton(button, category) {
+      var buttons = document.querySelectorAll('.filterDiv');
+      buttons.forEach(function(btn) {
+        btn.classList.remove('highlight');
+      });
+      button.classList.add('highlight');
+      filterSelection(category); // 상위 카테고리만 보여지도록 필터링
+    }
+  
+    document.addEventListener('DOMContentLoaded', function() {
+      syncButtonWithRadio();
+  
+      var radioButtons = document.querySelectorAll('input[name="radio"]');
+      radioButtons.forEach(function(radio) {
+          radio.addEventListener('change', syncButtonWithRadio);
+      });
+  
+      var showAllButton = document.querySelector('button[onclick="filterSelection(\'all\', true)"]');
+      showAllButton.addEventListener('click', function() {
+          deactivateRadioButtons();
+          setActiveButton('all');
+          deactivateSubCategoryButtons(); // 하위 카테고리 버튼 비활성화 추가
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+      // Jinja2를 사용하여 options 데이터를 자바스크립트 변수로 변환
+      const options = {{ options | tojson }};
+      
+      // 라디오 버튼 체크된 텍스트를 기준으로 필터 버튼 활성화 함수
+      function activateButtonsBasedOnCheckedRadio(options) {
+        // 체크된 라디오 버튼을 찾음
+        var checkedRadio = document.querySelector('input[name="radio"]:checked');
+        
+        if (checkedRadio) {
+          var checkedText = checkedRadio.nextElementSibling.textContent.trim();
+          console.log("Checked radio text:", checkedText);
+    
+          // 모든 필터 버튼의 활성화 상태 초기화
+          var allFilterButtons = document.querySelectorAll('button.btn');
+          allFilterButtons.forEach(button => button.classList.remove('highlight'));
+          
+          var allDetailButtons = document.querySelectorAll('.filterDiv');
+          allDetailButtons.forEach(button => button.classList.remove('highlight'));
+    
+          // options[0][idx]와 일치하는 버튼 찾기 및 활성화
+          for (let i = 0; i < options[0].length; i++) {
+            if (options[0][i] === checkedText) {
+              var filterButton = document.querySelector(`button[onclick*="${options[0][i]}"]`);
+              console.log("Filter button:", filterButton);
+              if (filterButton) {
+                filterButton.classList.add('highlight');
+              }
+              
+              // options[1][idx]와 일치하는 세부 필터 버튼 찾기 및 활성화
+              var detailButton = document.querySelector(`.filterDiv[data-type="${options[1][i]}"]`);
+              console.log("Detail button:", detailButton);
+              if (detailButton) {
+                detailButton.classList.add('highlight');
+              }
+            }
+          }
+        }
+      }
+      
+      // 함수 호출
+      activateButtonsBasedOnCheckedRadio(options);
+    
+      // 기존의 버튼 클릭 핸들러 설정 코드 유지
+      var labels = document.getElementsByClassName('radio_select_container');
+      for (var i = 0; i < labels.length; i++) {
+        labels[i].addEventListener('click', function(event) {
+          var itemName = event.currentTarget.getAttribute('data-item-name');
+          showImage(itemName);
+          
+          // 라디오 버튼 클릭 시 필터 버튼 활성화 함수 호출
+          activateButtonsBasedOnCheckedRadio(options);
+        });
+      }
+      
+      // Initial display setup
+      var checkedRadio = document.querySelector('input[name="radio"]:checked');
+      if (checkedRadio) {
+        var initialItemName = checkedRadio.closest('.radio_select_container').getAttribute('data-item-name');
+        showImage(initialItemName);
+      }
+    });
+    
+  </script>
+  <section>
+    <div class="inner">
+      <div class="division_box">
+        <p class="article_title">색상</p>
+        <ul class="division_color">
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('black')">
+              <img class = "black" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">블랙</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('white')">
+              <img class = "white" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">화이트</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('red')">
+              <img class = "red" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">레드</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('orange')">
+              <img class = "orange" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">오렌지</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('yellow')">
+              <img class = "yellow" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">옐로우</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('green')">
+              <img class = "green" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">그린</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('sky')">
+              <img class = "sky" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/skyblue.png" alt="의류색상">
+              <span class="color_text">스카이 블루</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('blue')">
+              <img class = "blue" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/blue.png" alt="의류색상">
+              <span class="color_text">블루</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('denim')">
+              <img class = "denim" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">데님</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('navy')">
+              <img class = "navy" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/navy.png" alt="의류색상">
+              <span class="color_text">네이비</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('khaki')">
+              <img class = "khaki" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">카키</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('pink')">
+              <img class = "pink" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">핑크</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('purple')">
+              <img class = "purple" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">퍼플</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('camel')">
+              <img class = "camel" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">카멜</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('beige')">
+              <img class = "beige" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">베이지</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('brown')">
+              <img class = "brown" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">브라운</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('ivory')">
+              <img class = "ivory" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">아이보리</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('grey')">
+              <img class = "grey" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/color-select-v5.gif" alt="의류색상">
+              <span class="color_text">그레이</span>
+            </button>
+          </li>
+          <li data-filter-key="color">
+            <button class="tooltip" onclick="activateColor('etc')">
+              <img class = "etc" src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/etc.png" alt="의류색상">
+              <span class="color_text">기타색상</span>
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+  <script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        // Jinja2를 사용하여 options 데이터를 자바스크립트 변수로 변환
+        var options = {{ options | tojson }};
+
+        // 라디오 버튼 체크된 텍스트를 기준으로 필터 버튼 활성화 함수
+        function activateButtonsBasedOnCheckedRadio() {
+            // 체크된 라디오 버튼을 찾음
+            var checkedRadio = document.querySelector('input[name="radio"]:checked');
+            
+            if (checkedRadio) {
+                var checkedText = checkedRadio.nextElementSibling.textContent.trim();
+                console.log("Checked radio text:", checkedText);
+          
+                // 모든 필터 버튼의 활성화 상태 초기화
+                var allFilterButtons = document.querySelectorAll('button.tooltip');
+                allFilterButtons.forEach(button => button.classList.remove('active'));
+
+                // options[0][idx]와 일치하는 버튼 찾기 및 그 다음 인덱스의 값을 가진 버튼 활성화
+                for (let i = 0; i < options[0].length; i++) {
+                    if (options[0][i] === checkedText) {
+                        var nextItem = options[1][i + 1];
+                        var filterButton = document.querySelector(`button[onclick*="${nextItem}"]`);
+                        console.log("Filter button:", filterButton);
+                        if (filterButton) {
+                            filterButton.classList.add('active');
+                        }
+                        break; // 일치하는 항목을 찾으면 루프 종료
+                    }
+                }
+            }
+        }
+
+        // 라디오 버튼이 변경될 때마다 활성화 함수 호출
+        document.querySelectorAll('input[name="radio"]').forEach(radio => {
+            radio.addEventListener('change', activateButtonsBasedOnCheckedRadio);
+        });
+
+        // 페이지 로드 시 처음으로 활성화 함수 호출
+        activateButtonsBasedOnCheckedRadio();
+    });
+    
+    function activateColor(filterName) {
+        console.log('Filter action for:', filterName);
+        // 모든 필터 버튼의 활성화 상태 초기화
+        var allFilterButtons = document.querySelectorAll('button.tooltip');
+        allFilterButtons.forEach(button => button.classList.remove('active'));
+
+        // 클릭된 버튼 활성화
+        var filterButton = document.querySelector(`button[onclick*="${filterName}"]`);
+        if (filterButton) {
+            filterButton.classList.add('active');
+        }
+    }
+  </script>
+  <section>
+    <form method="POST" id="preferenceForm" action="{{ url_for('main_bp.recommend') }}">
+      <div class="submit_container">
+        <input type="hidden" name="user_id" id="user_id" value="{{ user_id }}">
+        <input type="hidden" name="Cgname" id="Cgname">
+        <input type="hidden" name="item_name" id="item_name">
+        <input type="hidden" name="item_name_KR" id="item_name_KR">
+        <input type="hidden" name="color" id="color">
+        <input type="hidden" name="color_KR" id="color_KR">
+        <input type="hidden" name="image_url" id="image_url">
+        <input type="hidden" name="action" id="action" value="save">
+        <button type="submit" id="info_save">제품 검색</button>
+      </div>
+    </form>
+  </section>
+
+  <script>
+    function setFormValues() {
+      var activeCgButton = document.querySelector('button.btn.active');
+      var activeItemButton = document.querySelector('.filterDiv.highlight');
+      var activeColorButton = document.querySelector('button.tooltip.active');
+      var displayedImage = document.querySelector('.remove_bg[style*="display: block"]');
+  
+      if (activeCgButton) {
+        document.getElementById('Cgname').value = activeCgButton.textContent.trim();
+      }
+      if (activeItemButton) {
+        document.getElementById('item_name').value = activeItemButton.dataset.type;
+        document.getElementById('item_name_KR').value = activeItemButton.textContent.trim();
+      }
+      if (activeColorButton) {
+        document.getElementById('color').value = activeColorButton.querySelector('img').className;
+        document.getElementById('color_KR').value = activeColorButton.querySelector('span.color_text').textContent.trim();
+      }
+      if (displayedImage) {
+        var imagePath = new URL(displayedImage.src).pathname;
+        document.getElementById('image_url').value = imagePath;
+      }
+    }
+  
+    document.getElementById('preferenceForm').addEventListener('submit', setFormValues);
+  
+    function showLoadingOverlay() {
+      var loadingOverlay = document.querySelector('.loading-overlay');
+      if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+        updateLoadingPercentage();
+      }
+    }
+    
+    document.getElementById('info_save').addEventListener('click', function() {
+      showLoadingOverlay();
+    });
+  
+    function updateLoadingPercentage() {
+      var percentageElement = document.querySelector('.loading-percentage');
+      var progressBar = document.querySelector('.ldBar');
+      var percentage = 0;
+      var interval = setInterval(function() {
+        if (percentage < 100) {
+          percentage++;
+          percentageElement.textContent = percentage + '%';
+          progressBar.setAttribute('data-value', percentage + '%');
+        } else {
+          clearInterval(interval);
+        }
+      }, 1300);
+    }
+  </script>
+
+  <div class="loading-overlay">
+    <div class="ldBar" data-value="0%">
+      <div class="image-container">
+        <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/2s-200px-200px-unscreen.gif" class="background-image" alt="Loading">
+        <img src="https://mojji-bucket.s3.ap-northeast-2.amazonaws.com/main/static/img/commond_icon/search.gif" class="center-image" alt="Loading">
+      </div>
+      <div class="loading-percentage">0%</div>
+    </div>
+  </div>
+{% endblock %}
+</body>
+</html>
