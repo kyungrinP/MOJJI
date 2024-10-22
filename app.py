@@ -39,10 +39,6 @@ def unauthorized():
 def index():
     return redirect(url_for('main_bp.main_page'))
 
-# 업로드된 파일을 저장할 디렉토리 경로
-UPLOAD_FOLDER = '/main/static/img/uploads/'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
 # 허용된 파일 확장자 목록
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
