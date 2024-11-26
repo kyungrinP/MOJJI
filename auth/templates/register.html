@@ -81,6 +81,24 @@
                   </div>
                 </td>
               </tr>
+              <script>
+                // 비밀번호 input 요소
+                var passwdInput = document.getElementById('passwd');
+              
+                // 툴팁 요소
+                var tooltip = document.querySelector('.ec-base-tooltip.typeUpper');
+              
+                // 비밀번호 input을 클릭할 때 툴팁을 표시
+                passwdInput.addEventListener('focus', function(event) {
+                  tooltip.style.display = 'block';
+                  event.stopPropagation(); // 클릭 이벤트 전파 방지
+                });
+
+                // 비밀번호 input에서 포커스가 벗어날 때 툴팁을 숨김
+                passwdInput.addEventListener('blur', function(event) {
+                  tooltip.style.display = 'none';
+                });
+              </script>
               <tr>
                 <th>비밀번호 확인</th>
                 <td>
@@ -88,6 +106,20 @@
                   <span id="pwConfirmMsg" class=""></span>
                 </td>
               </tr>
+              <script>
+                function checkPasswordMatch() {
+                  var password = document.getElementById("passwd").value;
+                  var confirmPassword = document.getElementById("user_passwd_confirm").value;
+                  var message = document.getElementById("pwConfirmMsg");
+              
+                  if (password !== confirmPassword) {
+                    message.textContent = "비밀번호가 일치하지 않습니다.";
+                    message.style.color = "red";
+                  } else {
+                    message.textContent = "";
+                  }
+                }
+              </script>
               <tr>
                 <th>비밀번호 확인 질문</th>
                 <td>
@@ -163,8 +195,222 @@
       </div>
     </div>
   </section>
+  <script>
+    function checkDuplicateId() {
+      var memberId = document.getElementById('member_id').value;
+      var idRegex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{4,16}$/;
+    
+      if (!idRegex.test(memberId)) {
+        alert('아이디 입력 조건이 충족하지 않습니다.');
+        document.getElementById('idDuplication').value = 'idUncheck';
+        document.getElementById('member_id').focus();
+        return;
+      }
+
+      fetch(`/auth/check-id?member_id=${memberId}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.exists) {
+            alert('다른 아이디를 사용해주세요.');
+            document.getElementById('idDuplication').value = 'idUncheck';
+          } else {
+            alert('사용 가능한 아이디입니다.');
+            document.getElementById('idDuplication').value = 'idChecked';
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    }
+
+    function validateEmail() {
+      const emailInput = document.getElementById('email1');
+      const emailMsg = document.getElementById('emailMsg');
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if (emailPattern.test(emailInput.value)) {
+        emailMsg.textContent = '';
+      } else {
+        emailMsg.textContent = '이메일 형식이 잘못되었습니다. 예: hello@mojji.com';
+        emailMsg.style.color = 'red';
+      }
+    }    
+
+    async function checkForm(event) {
+      event.preventDefault(); // 폼 제출 기본 동작 중지
+
+      const email = document.getElementById('email1').value;
+      const emailMsg = document.getElementById("emailMsg");
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+      if (!emailPattern.test(email)) {
+          if (emailMsg) {
+              emailMsg.textContent = '이메일 형식이 잘못되었습니다. 예: hello@mojji.com';
+              emailMsg.style.color = 'red';
+          }
+          document.getElementById('email1').focus();
+          alert('이메일 형식이 잘못되었습니다.');
+          return false; // 폼 제출 중지
+      } else {
+          if (emailMsg) {
+              emailMsg.textContent = '';
+          }
+      }
+
+      const idDuplication = document.getElementById('idDuplication').value;
+      if (idDuplication !== 'idChecked') {
+          alert('아이디 중복 확인을 클릭해주세요.');
+          return false; // 폼 제출 중지
+      }
+
+      const id = document.getElementById('member_id').value;
+      const idMsg = document.getElementById('idMsg');
+      var idRegex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{4,16}$/;
+
+      if (!idRegex.test(id)) {
+          if (idMsg) {
+              idMsg.textContent = '영문소문자/숫자 조합, 4~16자';
+              idMsg.style.color = 'red';
+          }
+          document.getElementById('member_id').focus();
+          return false; // 폼 제출 중지
+      } else {
+          if (idMsg) {
+              idMsg.textContent = '';
+          }
+      }
+
+      const password = document.getElementById('passwd').value;
+      const confirmPassword = document.getElementById('user_passwd_confirm').value;
+
+      if (password !== confirmPassword) {
+          alert('비밀번호가 일치하지 않습니다.');
+          document.getElementById('user_passwd_confirm').focus();
+          return false; // 폼 제출 중지
+      }
+
+      const postcode = document.getElementById('postcode1').value;
+      if (!postcode) {
+          alert('주소를 입력해주세요.');
+          document.getElementById('postcode1').focus();
+          return false;
+      }
+
+      const mobile = document.getElementById('mobile1').value + document.getElementById('mobile2').value + document.getElementById('mobile3').value;
+
+      if (mobile.length !== 11) {
+          alert('핸드폰 번호가 올바르지 않습니다.');
+          return false;
+      }
+
+      try {
+          const mobileResponse = await fetch(`/auth/check-mobile?mobile=${mobile}`);
+          const mobileData = await mobileResponse.json();
+
+          if (mobileData.valid) {
+            alert('이미 사용 중인 휴대전화 번호입니다.');
+            document.getElementById('mobile2').focus();
+            document.getElementById('mobile2').value = '';
+            document.getElementById('mobile3').value = '';
+            return false; // 폼 제출 중지
+          }
+
+          const response = await fetch(`/auth/check-pw?passwd=${password}`);
+          const data = await response.json();
+
+          if (!data.valid) {
+              alert('비밀번호 입력 조건이 충족하지 않습니다.');
+              document.getElementById('passwd').focus();
+              document.getElementById('passwd').value = '';
+              document.getElementById('user_passwd_confirm').value = '';
+              return false; // 폼 제출 중지
+          }
+
+          const emailResponse = await fetch(`/auth/check-email?email=${email}`);
+          const emailData = await emailResponse.json();
+
+          if (emailData.valid) {
+              alert('이미 사용 중인 이메일입니다.');
+              document.getElementById('email1').focus();
+              document.getElementById('email1').value = '';
+              return false; // 폼 제출 중지
+          }
+
+          alert(`환영합니다. ${id}님`);
+          // 모든 검사가 통과되면 폼을 제출함
+          document.getElementById('registerForm').submit();
+      } catch (error) {
+          console.error('Error:', error);
+          alert('서버와의 통신 중 오류가 발생했습니다.');
+          return false; // 폼 제출 중지
+      }
+  }
+    // 폼에 이벤트 리스너 추가
+    document.getElementById('registerForm').addEventListener('submit', checkForm);    
+
+    document.getElementById('member_id').addEventListener('input', function() {
+      var id = this.value;
+      var idMsg = document.getElementById('idMsg');
+      var regex = /^(?=.*[a-z])(?=.*\d)[a-z\d]{4,16}$/;
+    
+      if (!regex.test(id)) {
+        idMsg.textContent = '영문소문자/숫자 조합, 4~16자';
+        idMsg.style.color = 'red';
+      } else {
+        idMsg.textContent = '';
+      }
+    });
+  </script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-  <script src="{{ url_for('auth.static', filename='js/register.js') }}"></script>
+  <script>
+      function sample6_execDaumPostcode() {
+          new daum.Postcode({
+              oncomplete: function(data) {
+                  // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+  
+                  // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+                  // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+                  var addr = ''; // 주소 변수
+                  var extraAddr = ''; // 참고항목 변수
+  
+                  //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+                  if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+                      addr = data.roadAddress;
+                  } else { // 사용자가 지번 주소를 선택했을 경우(J)
+                      addr = data.jibunAddress;
+                  }
+  
+                  // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+                  if(data.userSelectedType === 'R'){
+                      // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+                      // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+                      if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+                          extraAddr += data.bname;
+                      }
+                      // 건물명이 있고, 공동주택일 경우 추가한다.
+                      if(data.buildingName !== '' && data.apartment === 'Y'){
+                          extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+                      }
+                      // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+                      if(extraAddr !== ''){
+                          extraAddr = ' (' + extraAddr + ')';
+                      }
+                      // 조합된 참고항목을 해당 필드에 넣는다.
+                      document.getElementById("extraAddress").value = extraAddr;
+                  
+                  } else {
+                      document.getElementById("extraAddress").value = '';
+                  }
+  
+                  // 우편번호와 주소 정보를 해당 필드에 넣는다.
+                  document.getElementById('postcode1').value = data.zonecode;
+                  document.getElementById("addr1").value = addr;
+                  // 커서를 상세주소 필드로 이동한다.
+                  document.getElementById("addr2").focus();
+              }
+          }).open();
+      }
+  </script>
 {% endblock %}
 </body>
 </html>
