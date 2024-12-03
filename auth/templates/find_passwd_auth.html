@@ -55,20 +55,20 @@
               <strong class="term">이메일</strong>
               <span class="desc">
                   <strong class="txtEm">{{ user_email }}</strong> 
-                  <a href="#none" class="btnNormal">인증번호 받기</a>
+                  <a href="javascript:void(0);" class="btnNormal" id="sendOtpButtonEmail">인증번호 받기</a>
               </span>
             </li>
             <li id="user_verification_mobile_info">
               <strong class="term">휴대폰 번호</strong>
               <span class="desc">
                   <strong class="txtEm number">{{ user_mobile }}</strong>
-                  <a href="#none" class="btnNormal">인증번호 받기</a>
+                  <a href="javascript:void(0);" class="btnNormal" id="sendOtpButtonMobile">인증번호 받기</a>
               </span>
             </li>
             <li>
               <strong class="term">인증번호</strong>
               <div class="desc">
-                  <input id="verification_code" name="verification_code" class="lostInput" type="password">
+                  <input type="text" id="verification_code" name="verification_code" class="lostInput" placeholder="인증번호를 입력하세요" required>
                   <div class="txtInfo">
                       <p id="user_verification_email_desc" >1회 발송된 인증번호의 유효 시간은 60분이며, <br>1회 인증번호 발송 후 30초 이후에 재전송이 가능합니다.</p>
                       <p id="user_verification_mobile_desc" >1회 발송된 인증번호의 유효 시간은 3분이며, <br>1회 인증번호 발송 후 30초 이후에 재전송이 가능합니다.</p>
@@ -76,12 +76,13 @@
               </div>
             </li>
           <div class="ec-base-button">
-            <form id="preferenceForm" action="/auth/find_passwd_change" method="POST">
-              <input type="hidden" name="user_id" value="{{ user_id }}" />
-              <input type="hidden" name="user_mobile" value="{{ user_mobile }}" />
-              <input type="hidden" name="user_email" value="{{ user_email }}" />
-              <button type="submit" class="btnSubmit-result">확인</button>
-              <button type="button" class="btnSubmit-result" onclick="window.location.href = '/'">취소</button>
+            <form id="preferenceForm" action="/auth/verify_otp" method="POST">
+                <input type="hidden" name="verification_code" id="hidden_verification_code" />
+                <input type="hidden" name="user_id" value="{{ user_id }}" />
+                <input type="hidden" name="user_mobile" value="{{ user_mobile }}" />
+                <input type="hidden" name="user_email" value="{{ user_email }}" />
+                <button type="submit" class="btnSubmit-result">확인</button>
+                <button type="button" class="btnSubmit-result" onclick="window.location.href = '/'">취소</button>
             </form>
           </div>
         </div>
@@ -98,39 +99,155 @@
       const phoneInfo = document.getElementById('user_verification_mobile_info');
       const emailDesc = document.getElementById('user_verification_email_desc');
       const phoneDesc = document.getElementById('user_verification_mobile_desc');
-      const selectedMethod = {{ Method | tojson }}; // 서버에서 전달된 selected_method 값을 가져옵니다.
-      
+      const sendOtpButtonEmail = document.getElementById('sendOtpButtonEmail');
+      const sendOtpButtonMobile = document.getElementById('sendOtpButtonMobile');
+      const verificationForm = document.getElementById('preferenceForm');
+      const verificationCodeInput = document.getElementById('verification_code');
+
+      const selectedMethod = JSON.parse('{{ Method | tojson | safe }}');    // 서버에서 전달된 selected_method 값을 가져옴
+      const otpCooldownTime = 60; // 쿨다운 시간(초)
+      let isOtpSent = false; // 인증번호 발송 여부
+      let isSendingOtp = false; // 현재 OTP 요청 중 상태
+
+      const userId = "{{ user_id }}";
+      const userEmail = "{{ user_email }}";
+      const userMobile = "{{ user_mobile }}";
+
+      // 화면 전환 함수
       function toggleView() {
         if (emailRadio.checked) {
-          emailInfo.style.display = 'block';
-          phoneInfo.style.display = 'none';
-          emailDesc.style.display = 'block';
-          phoneDesc.style.display = 'none';
+            emailInfo.style.display = 'block';
+            phoneInfo.style.display = 'none';
+            emailDesc.style.display = 'block';
+            phoneDesc.style.display = 'none';
         } else if (phoneRadio.checked) {
-          emailInfo.style.display = 'none';
-          phoneInfo.style.display = 'block';
-          emailDesc.style.display = 'none';
-          phoneDesc.style.display = 'block';
+            emailInfo.style.display = 'none';
+            phoneInfo.style.display = 'block';
+            emailDesc.style.display = 'none';
+            phoneDesc.style.display = 'block';
         }
       }
 
+      // 초기 상태 설정
       function setInitialState() {
         if (selectedMethod === "email") {
-          emailRadio.checked = true;
-          phoneRadio.style.display = 'none';
-          phoneLabel.style.display = 'none';
+            emailRadio.checked = true;
+            phoneRadio.style.display = 'none';
+            phoneLabel.style.display = 'none';
         } else if (selectedMethod === "phone") {
-          phoneRadio.checked = true;
-          emailRadio.style.display = 'none';
-          emailLabel.style.display = 'none';
+            phoneRadio.checked = true;
+            emailRadio.style.display = 'none';
+            emailLabel.style.display = 'none';
         }
         toggleView();
       }
 
+      // 버튼 비활성화 및 타이머 설정
+      function disableButton(button, cooldownTime) {
+        button.disabled = true; // 버튼 비활성화
+        button.style.pointerEvents = "none"; // 마우스 클릭 비활성화
+        let remainingTime = cooldownTime;
+
+        const timer = setInterval(() => {
+            button.textContent = `다시 요청 (${remainingTime}초)`; // 남은 시간 표시
+            remainingTime--;
+
+            if (remainingTime < 0) {
+                clearInterval(timer);
+                button.disabled = false; // 버튼 활성화
+                button.style.pointerEvents = "auto"; // 마우스 클릭 활성화
+                button.textContent = "인증번호 받기"; // 버튼 텍스트 복원
+            }
+        }, 1000);
+      }
+
+      // OTP 요청 함수
+      function sendOtp(method, contact, button) {
+        // 버튼 클릭 즉시 쿨다운 로직 실행
+        disableButton(button, otpCooldownTime);
+
+        if (isSendingOtp) {
+            alert("이미 인증번호를 요청 중입니다. 잠시만 기다려주세요.");
+            return;
+        }
+        isSendingOtp = true;
+
+        fetch('/auth/send_otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                method: method,
+                contact: contact
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert("인증번호가 성공적으로 발송되었습니다.");
+                isOtpSent = true;
+            } else {
+                alert(data.message || "인증번호 발송에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert("서버와의 연결에 실패했습니다. 잠시 후 다시 시도해주세요.");
+        })
+        .finally(() => {
+            isSendingOtp = false; // 요청 상태 초기화
+        });
+      }
+
+      // 인증번호 검증 함수
+      verificationForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const verificationCode = verificationCodeInput.value;
+
+        if (!isOtpSent) {
+            alert('인증번호 받기를 통해 본인확인 인증을 진행해주세요.');
+            return;
+        }
+
+        if (!verificationCode) {
+            alert('인증번호를 입력하세요.');
+            return;
+        }
+
+        fetch('/auth/verify_otp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                verification_code: verificationCode,
+                user_id: userId,
+                user_email: userEmail,
+                user_mobile: userMobile
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = data.redirect_url;
+            } else {
+                alert(data.message || "인증에 실패했습니다.");
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('서버와의 연결에 실패했습니다. 잠시 후 다시 시도해주세요.');
+        });
+      });
+
+      // 초기 이벤트 및 상태 설정
       emailRadio.addEventListener('change', toggleView);
       phoneRadio.addEventListener('change', toggleView);
-
-      // 초기 상태 설정
+      sendOtpButtonEmail.addEventListener('click', () => sendOtp('email', userEmail, sendOtpButtonEmail));
+      sendOtpButtonMobile.addEventListener('click', () => sendOtp('mobile', userMobile, sendOtpButtonMobile));
       setInitialState();
     });
   </script>
