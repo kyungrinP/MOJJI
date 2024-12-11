@@ -215,6 +215,22 @@ def send_otp():
             )
             print(f"전화번호 속성 업데이트 성공: {contact}")
 
+            client.admin_set_user_mfa_preference(
+                UserPoolId='ap-northeast-2_RG8lPds2G',
+                Username=user_id,
+                SMSMfaSettings={
+                    'Enabled': True,
+                    'PreferredMfa': True
+                }
+            )
+
+            user_details = client.admin_get_user(
+                UserPoolId='ap-northeast-2_RG8lPds2G',
+                Username=user_id
+            )
+            print(user_details)
+            print(f"선호 MFA 설정 확인: {user_details.get('MFAOptions')}")
+
         elif method == "email":
             # 이메일 검증
             if "@" not in contact:
